@@ -1,0 +1,24 @@
+{
+  "name": "employee-tracker",
+  "version": "1.0.0",
+  "description": "View and create employees",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Wir3s/employee-tracker.git"
+  },
+  "author": "Andre Bessette",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Wir3s/employee-tracker/issues"
+  },
+  "homepage": "https://github.com/Wir3s/employee-tracker#readme",
+  "dependencies": {
+    "console.table": "^0.10.0",
+    "inquirer": "^8.2.4",
+    "mysql2": "^3.0.1"
+  }
+}
