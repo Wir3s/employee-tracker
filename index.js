@@ -19,7 +19,7 @@ const mainMenuQ = [
 ];
 
 function mainMenu() {
-  inquirer.createPromptModule(mainMenuQ).then((data) => {
+  inquirer.prompt(mainMenuQ).then((data) => {
     switch (data.mmPrompt) {
       case "View All Employees":
         viewAllEmp();
@@ -44,3 +44,5 @@ function mainMenu() {
     }
   });
 }
+
+mainMenu();
