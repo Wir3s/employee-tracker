@@ -45,4 +45,11 @@ function mainMenu() {
   });
 }
 
-mainMenu();
+// Notes from Sara:
+// mainMenu();
+
+// addEmployee(employee) {
+
+//   return this.connection.promise().query("INSERT INTO employee SET ?", employee);
+
+// }
