@@ -137,57 +137,57 @@ function addDept() {
     );
   });
 }
-
+// Get all roles as CHOICE
 function viewEmpRoles() {
-  return db.promise().query("SELECT title FROM role");
+  return db.promise().query("SELECT title, id FROM role");
 }
 
-// Testing how to get all employees as CHOICE
+// Get all employees as CHOICE
 
 function viewEmpChoices() {
-  return db.promise().query("SELECT first_name, last_name FROM employee");
+  return db.promise().query("SELECT first_name, last_name, id FROM employee");
 }
-
-// From slack tutor:
-// 1. query the viewEmpChoices function which will give you an object that looks like [[rows], [fields]
-// 2. wait for the query to resolve, then modify the data to get an array that looks like you want it to
-// 3. run the inquirer prompt to choose which one needs to be updated
-// 4. query the database again for the roles that can be used
-// 5. wait for the query to resolve then modify the data so you can display the list of roles
-// 6. call the update role function with the approriate inputs
-
+// Update employee role
 const updateEmpR = () => {
-  viewEmpChoices().then(([rows]) => {
+  viewEmpChoices()
+  .then(([rows]) => {
     let employees = rows;
     console.log(employees);
-    //  let employeeChoices = JSON.stringify(employees, ["first_name"]);
-
     let employeeChoices = employees.map(
-      (a) => `${a.first_name} ${a.last_name}`
+      (a) => `${a.first_name} ${a.last_name} ${a.id}`
     );
     console.log(employeeChoices);
-    //do #2 here to get employeeChoices
-    //     inquirer.prompt([
-    //{
-    //           type: "list",
-    //           name: "empL",
-    //           message: "Which Employee?",
-    //           choices: choices,
-    //         },]). then( //do #4 inside this then)
-    inquirer.prompt([
-      {
-        type: "list",
-        name: "empL",
-        message: "Which Employee?",
-        choices: employeeChoices,
-      },
-    ]);
-    //   .then(
-    //     viewEmpRoles().then(([rows]) => {
-    //       let roles = rows;
-    //       console.log(roles);
-    //     })
-    //   );
+    
+    inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "empL",
+          message: "Which Employee?",
+          choices: employeeChoices,
+        },
+      ])
+
+      .then(
+        viewEmpRoles().then(([rows]) => {
+          let roles = rows;
+          console.log(roles);
+          let roleChoices = roles.map((a) => `${a.title} ${a.id}`);
+          console.log(roleChoices);
+          inquirer
+            .prompt([
+              {
+                type: "list",
+                name: "roleL",
+                message: "Change to which role?",
+                choices: roleChoices,
+              },
+            ])
+            .then((data) => {
+              console.log(data);
+            });
+        })
+      );
   });
 };
 
