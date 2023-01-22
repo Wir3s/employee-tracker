@@ -73,8 +73,6 @@ function mainMenu() {
 const selEmpFN = "SELECT first_name FROM employee";
 const selAllEmp = "SELECT * from role";
 
-
-
 // View all employees without PROMISE
 function viewAllEmp() {
   db.query(
@@ -107,6 +105,18 @@ function viewAllDept() {
   });
 }
 
+// View Departments with PROMISE
+// function viewAllDept() {
+//   db.promise()
+//     .query("SELECT * FROM department")
+//     .then(([rows, fields]) => {
+//       console.table(rows);
+//       mainMenu();
+//     })
+//     .catch(console.log)
+//     .then(() => db.end());
+// }
+
 // View Roles
 function viewAllRoles() {
   db.query(
@@ -134,20 +144,19 @@ function addDept() {
   });
 }
 
-
 // Add an Employee
-const addEmpQ = [
-  {
-    type: "input",
-    name: "newEmpName",
-    message: "What is name of the new Employee?",
-  },
-  {
-    type: "input",
-    name: "newEmpDep",
-    message: "What department are they in?",
-  },
-];
+// const addEmpQ = [
+//   {
+//     type: "input",
+//     name: "newEmpName",
+//     message: "What is name of the new Employee?",
+//   },
+//   {
+//     type: "input",
+//     name: "newEmpDep",
+//     message: "What department are they in?",
+//   },
+// ];
 
 mainMenu();
 
@@ -155,9 +164,6 @@ mainMenu();
 // addEmployee(employee) {
 
 //   return this.connection.promise().query("INSERT INTO employee SET ?", employee);
-
-
-
 
 // Testing how to get all employees as CHOICE
 // function viewEmpChoices() {
@@ -190,7 +196,6 @@ mainMenu();
 //       });
 //   });
 // };
-
 
 // Update Employee Roles - Attempt 1
 
