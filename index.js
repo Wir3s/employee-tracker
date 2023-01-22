@@ -69,28 +69,27 @@ function mainMenu() {
   });
 }
 
+// Pre-made queries
 const selEmpFN = "SELECT first_name FROM employee";
 const selAllEmp = "SELECT * from role";
 
-const updateEmpRoleQ = [
-  {
-    type: "list",
-    name: "empL",
-    message: "Which Employee?",
-    choices: ["1", "2"],
-  },
-];
+// Inqurier List for Updating Employee Role
+// const updateEmpRoleQ = [
+//   {
+//     type: "list",
+//     name: "empL",
+//     message: "Which Employee?",
+//     choices: "viewEmpChoices()",
+//   },
+// ];
 
+//Function to try to list employee names as choices
 // function viewEmpChoices() {
 //   db.query(
-//     {
-//       sql: "SELECT * FROM role JOIN department ON role.department_id = department.id",
-//       rowsAsArray: true,
-//     },
-//     function (err, results, fields) {
+//     "SELECT * FROM role JOIN department ON role.department_id = department.id",
+//     function (err, results) {
 //       {
 //         console.table(results);
-//         console.table(fields);
 //         mainMenu();
 //       }
 //     }
@@ -98,10 +97,13 @@ const updateEmpRoleQ = [
 // }
 
 function viewAllEmp() {
-  db.query(selEmpFN, function (err, results) {
-    console.table(results);
-    mainMenu();
-  });
+  db.query(
+    "SELECT first_name, last_name FROM employee",
+    function (err, results) {
+      console.table(results);
+      mainMenu();
+    }
+  );
 }
 
 function viewAllDept() {
@@ -134,21 +136,40 @@ function addDept() {
   });
 }
 // Update Employee Roles - Attempt 1
-function updateEmpR() {
-  inquirer.prompt(updateEmpRoleQ).then((data) => {
-    console.log(data);
-  });
-}
+
+// function updateEmpR() {
+//   inquirer.prompt(updateEmpRoleQ).then((data) => {
+//     console.log(data);
+//   });
+// }
 
 // Update Employee Roles - Attempt 2
-// {
-//     db.promise().query("Select * from employee")
-//         .then((rows) => {
-//             console.log(rows);
-//         })
-//         .catch(console.log)
-//         .then( () => db.end())
-// }
+
+function updateEmpR() {
+  db.promise()
+    .query("Select first_name, last_name from employee")
+    .then(([rows, fields]) => {
+      console.log(rows);
+    })
+    .catch(console.log)
+    .then(() => db.end());
+}
+
+// Add an Employee
+const addEmpQ = [
+  {
+    type: "input",
+    name: "newEmpName",
+    message: "What is name of the new Employee?",
+  },
+  {
+    type: "input",
+    name: "newEmpDep",
+    message: "What department are they in?",
+  },
+];
+
+// Add a role
 
 mainMenu();
 
