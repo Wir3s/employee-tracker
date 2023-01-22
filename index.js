@@ -69,53 +69,46 @@ function mainMenu() {
   });
 }
 
-// Pre-made queries
-const selEmpFN = "SELECT first_name FROM employee";
-const selAllEmp = "SELECT * from role";
-
 // View all employees without PROMISE
-function viewAllEmp() {
-  db.query(
-    "SELECT first_name, last_name FROM employee",
-    function (err, results) {
-      console.table(results);
-      mainMenu();
-    }
-  );
-}
+// function viewAllEmp() {
+//   db.query(
+//     "SELECT first_name, last_name FROM employee",
+//     function (err, results) {
+//       console.table(results);
+//       mainMenu();
+//     }
+//   );
+// }
 
 // View all employees with PROMISE
-
-// function viewAllEmp() {
-//   db.promise()
-//     .query("SELECT first_name, last_name FROM employee")
-//     .then(([rows, fields]) => {
-//       console.table(rows);
-//       mainMenu();
-//     })
-//     .catch(console.log)
-//     .then(() => db.end());
-// }
-
-// View Departments
-function viewAllDept() {
-  db.query("SELECT * FROM department", function (err, results) {
-    console.table(results);
-    mainMenu();
-  });
+function viewAllEmp() {
+  db.promise()
+    .query("SELECT first_name, last_name FROM employee")
+    .then(([rows, fields]) => {
+      console.table(rows);
+      mainMenu();
+    })
+    .catch(console.log);
 }
 
-// View Departments with PROMISE
+// View Departments without PROMISE
 // function viewAllDept() {
-//   db.promise()
-//     .query("SELECT * FROM department")
-//     .then(([rows, fields]) => {
-//       console.table(rows);
-//       mainMenu();
-//     })
-//     .catch(console.log)
-//     .then(() => db.end());
+//   db.query("SELECT * FROM department", function (err, results) {
+//     console.table(results);
+//     mainMenu();
+//   });
 // }
+
+// View Departments with PROMISE
+function viewAllDept() {
+  db.promise()
+    .query("SELECT * FROM department")
+    .then(([rows, fields]) => {
+      console.table(rows);
+      mainMenu();
+    })
+    .catch(console.log);
+}
 
 // View Roles
 function viewAllRoles() {
@@ -127,6 +120,7 @@ function viewAllRoles() {
     }
   );
 }
+
 // Add a role
 // function addRole() {}
 
@@ -144,6 +138,59 @@ function addDept() {
   });
 }
 
+function viewEmpRoles() {
+  return db.promise().query("SELECT title FROM role");
+}
+
+// Testing how to get all employees as CHOICE
+
+function viewEmpChoices() {
+  return db.promise().query("SELECT first_name, last_name FROM employee");
+}
+
+// From slack tutor:
+// 1. query the viewEmpChoices function which will give you an object that looks like [[rows], [fields]
+// 2. wait for the query to resolve, then modify the data to get an array that looks like you want it to
+// 3. run the inquirer prompt to choose which one needs to be updated
+// 4. query the database again for the roles that can be used
+// 5. wait for the query to resolve then modify the data so you can display the list of roles
+// 6. call the update role function with the approriate inputs
+
+const updateEmpR = () => {
+  viewEmpChoices().then(([rows]) => {
+    let employees = rows;
+    console.log(employees);
+    //  let employeeChoices = JSON.stringify(employees, ["first_name"]);
+
+    let employeeChoices = employees.map(
+      (a) => `${a.first_name} ${a.last_name}`
+    );
+    console.log(employeeChoices);
+    //do #2 here to get employeeChoices
+    //     inquirer.prompt([
+    //{
+    //           type: "list",
+    //           name: "empL",
+    //           message: "Which Employee?",
+    //           choices: choices,
+    //         },]). then( //do #4 inside this then)
+    inquirer.prompt([
+      {
+        type: "list",
+        name: "empL",
+        message: "Which Employee?",
+        choices: employeeChoices,
+      },
+    ]);
+    //   .then(
+    //     viewEmpRoles().then(([rows]) => {
+    //       let roles = rows;
+    //       console.log(roles);
+    //     })
+    //   );
+  });
+};
+
 // Add an Employee
 // const addEmpQ = [
 //   {
@@ -152,9 +199,10 @@ function addDept() {
 //     message: "What is name of the new Employee?",
 //   },
 //   {
-//     type: "input",
+//     type: "list",
 //     name: "newEmpDep",
 //     message: "What department are they in?",
+//     choices:
 //   },
 // ];
 
@@ -164,79 +212,3 @@ mainMenu();
 // addEmployee(employee) {
 
 //   return this.connection.promise().query("INSERT INTO employee SET ?", employee);
-
-// Testing how to get all employees as CHOICE
-// function viewEmpChoices() {
-//   return db
-//     .promise()
-//     .query("SELECT first_name, last_name FROM employee")
-//     .then(([rows, fields]) => {
-//       console.log(rows);
-//     })
-//     .catch(console.log)
-//     .then(() => db.end());
-// }
-
-// const updateEmpR = async () => {
-//   let choices = await viewEmpChoices();
-//   console.log(choices);
-//   return new Promise((resolve, reject) => {
-//     inquirer
-//       .prompt([
-//         {
-//           type: "list",
-//           name: "empL",
-//           message: "Which Employee?",
-//           choices: choices,
-//         },
-//       ])
-//       .then(({ empL }) => {
-//         console.log(empL);
-//         resolve();
-//       });
-//   });
-// };
-
-// Update Employee Roles - Attempt 1
-
-// function updateEmpR() {
-//   inquirer.prompt(updateEmpRoleQ).then((data) => {
-//     console.log(data);
-//   });
-// }
-
-// Update Employee Roles - Attempt 2
-
-// function viewEmpChoices() {
-//   db.promise()
-//     .query("Select first_name, last_name from employee")
-//     .then(([rows, fields]) => {
-//       console.log(rows);
-//       return rows;
-//     })
-//     .catch(console.log)
-//     .then(() => db.end());
-// }
-
-// Inqurier List for Updating Employee Role
-// const updateEmpRoleQ = [
-//   {
-//     type: "list",
-//     name: "empL",
-//     message: "Which Employee?",
-//     choices: viewEmpChoices(),
-//   },
-// ];
-
-//Function to try to list employee names as choices
-// function viewEmpChoices() {
-//   db.query(
-//     "SELECT * FROM role JOIN department ON role.department_id = department.id",
-//     function (err, results) {
-//       {
-//         console.table(results);
-//         mainMenu();
-//       }
-//     }
-//   );
-// }
