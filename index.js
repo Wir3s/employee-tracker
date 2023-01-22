@@ -73,29 +73,9 @@ function mainMenu() {
 const selEmpFN = "SELECT first_name FROM employee";
 const selAllEmp = "SELECT * from role";
 
-// Inqurier List for Updating Employee Role
-// const updateEmpRoleQ = [
-//   {
-//     type: "list",
-//     name: "empL",
-//     message: "Which Employee?",
-//     choices: "viewEmpChoices()",
-//   },
-// ];
 
-//Function to try to list employee names as choices
-// function viewEmpChoices() {
-//   db.query(
-//     "SELECT * FROM role JOIN department ON role.department_id = department.id",
-//     function (err, results) {
-//       {
-//         console.table(results);
-//         mainMenu();
-//       }
-//     }
-//   );
-// }
 
+// View all employees without PROMISE
 function viewAllEmp() {
   db.query(
     "SELECT first_name, last_name FROM employee",
@@ -106,6 +86,20 @@ function viewAllEmp() {
   );
 }
 
+// View all employees with PROMISE
+
+// function viewAllEmp() {
+//   db.promise()
+//     .query("SELECT first_name, last_name FROM employee")
+//     .then(([rows, fields]) => {
+//       console.table(rows);
+//       mainMenu();
+//     })
+//     .catch(console.log)
+//     .then(() => db.end());
+// }
+
+// View Departments
 function viewAllDept() {
   db.query("SELECT * FROM department", function (err, results) {
     console.table(results);
@@ -113,6 +107,7 @@ function viewAllDept() {
   });
 }
 
+// View Roles
 function viewAllRoles() {
   db.query(
     "SELECT * FROM role JOIN department ON role.department_id = department.id",
@@ -122,7 +117,10 @@ function viewAllRoles() {
     }
   );
 }
+// Add a role
+// function addRole() {}
 
+// Add a department
 function addDept() {
   inquirer.prompt(newDeptQ).then((data) => {
     db.query(
@@ -135,25 +133,7 @@ function addDept() {
     );
   });
 }
-// Update Employee Roles - Attempt 1
 
-// function updateEmpR() {
-//   inquirer.prompt(updateEmpRoleQ).then((data) => {
-//     console.log(data);
-//   });
-// }
-
-// Update Employee Roles - Attempt 2
-
-function updateEmpR() {
-  db.promise()
-    .query("Select first_name, last_name from employee")
-    .then(([rows, fields]) => {
-      console.log(rows);
-    })
-    .catch(console.log)
-    .then(() => db.end());
-}
 
 // Add an Employee
 const addEmpQ = [
@@ -169,11 +149,89 @@ const addEmpQ = [
   },
 ];
 
-// Add a role
-
 mainMenu();
 
 // Notes from Sara:
 // addEmployee(employee) {
 
 //   return this.connection.promise().query("INSERT INTO employee SET ?", employee);
+
+
+
+
+// Testing how to get all employees as CHOICE
+// function viewEmpChoices() {
+//   return db
+//     .promise()
+//     .query("SELECT first_name, last_name FROM employee")
+//     .then(([rows, fields]) => {
+//       console.log(rows);
+//     })
+//     .catch(console.log)
+//     .then(() => db.end());
+// }
+
+// const updateEmpR = async () => {
+//   let choices = await viewEmpChoices();
+//   console.log(choices);
+//   return new Promise((resolve, reject) => {
+//     inquirer
+//       .prompt([
+//         {
+//           type: "list",
+//           name: "empL",
+//           message: "Which Employee?",
+//           choices: choices,
+//         },
+//       ])
+//       .then(({ empL }) => {
+//         console.log(empL);
+//         resolve();
+//       });
+//   });
+// };
+
+
+// Update Employee Roles - Attempt 1
+
+// function updateEmpR() {
+//   inquirer.prompt(updateEmpRoleQ).then((data) => {
+//     console.log(data);
+//   });
+// }
+
+// Update Employee Roles - Attempt 2
+
+// function viewEmpChoices() {
+//   db.promise()
+//     .query("Select first_name, last_name from employee")
+//     .then(([rows, fields]) => {
+//       console.log(rows);
+//       return rows;
+//     })
+//     .catch(console.log)
+//     .then(() => db.end());
+// }
+
+// Inqurier List for Updating Employee Role
+// const updateEmpRoleQ = [
+//   {
+//     type: "list",
+//     name: "empL",
+//     message: "Which Employee?",
+//     choices: viewEmpChoices(),
+//   },
+// ];
+
+//Function to try to list employee names as choices
+// function viewEmpChoices() {
+//   db.query(
+//     "SELECT * FROM role JOIN department ON role.department_id = department.id",
+//     function (err, results) {
+//       {
+//         console.table(results);
+//         mainMenu();
+//       }
+//     }
+//   );
+// }
