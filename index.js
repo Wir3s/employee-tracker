@@ -47,6 +47,7 @@ function mainMenu() {
         viewAllEmp();
         break;
       case "Add Employee":
+        addNewEmp();
         break;
       case "Update Employee Role":
         updateEmpR();
@@ -68,17 +69,29 @@ function mainMenu() {
     }
   });
 }
+// Get all roles as CHOICE
+function viewEmpRoles() {
+  return db.promise().query("SELECT title, id FROM role");
+}
 
-// View all employees without PROMISE
-// function viewAllEmp() {
-//   db.query(
-//     "SELECT first_name, last_name FROM employee",
-//     function (err, results) {
-//       console.table(results);
-//       mainMenu();
-//     }
-//   );
-// }
+// Get all employees as CHOICE
+function viewEmpChoices() {
+  return db.promise().query("SELECT first_name, last_name, id FROM employee");
+}
+
+// Get all departments as CHOICE
+function viewDeptChoices() {
+  return db.promise().query("SELECT id, name FROM department");
+}
+
+// Get all managers as CHOICE
+function viewMgrChoices() {
+  return db
+    .promise()
+    .query(
+      "SELECT id, first_name, last_name FROM employee WHERE manager_id = NULL"
+    );
+}
 
 // View all employees with PROMISE
 function viewAllEmp() {
@@ -90,14 +103,6 @@ function viewAllEmp() {
     })
     .catch(console.log);
 }
-
-// View Departments without PROMISE
-// function viewAllDept() {
-//   db.query("SELECT * FROM department", function (err, results) {
-//     console.table(results);
-//     mainMenu();
-//   });
-// }
 
 // View Departments with PROMISE
 function viewAllDept() {
@@ -113,16 +118,53 @@ function viewAllDept() {
 // View Roles
 function viewAllRoles() {
   db.query(
-    "SELECT * FROM role JOIN department ON role.department_id = department.id",
+    "SELECT role.id As Role_ID, role.title, role.salary, department.name AS Department FROM role JOIN department ON role.department_id = department.id",
     function (err, results) {
-      console.table(results, ["id", "title", "salary", "name"]);
+      console.table(results, ["Role_ID", "title", "salary", "Department"]);
       mainMenu();
     }
   );
 }
 
 // Add a role
-// function addRole() {}
+const addRole = () => {
+  viewDeptChoices().then(([rows]) => {
+    let depts = rows;
+    console.log(depts);
+    let deptChoices = depts.map((a) => (a.name, a.id));
+    console.log(deptChoices);
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          name: "newRoleTitle",
+          message: "What is the title of the new Role?",
+        },
+        {
+          type: "input",
+          name: "newSal",
+          message: "What is the salary of the new Role?",
+        },
+        {
+          type: "list",
+          name: "deptL",
+          message: "Which department does the role belong to?",
+          choices: deptChoices,
+        },
+      ])
+      .then((data) => {
+        console.log("Here is data", data);
+        db.query(
+          "INSERT INTO role VALUES (?)",
+          [data.newRoleTitle, data.newSal, data.deptL],
+          function (err, results) {
+            console.log(results);
+            viewAllRoles();
+          }
+        );
+      });
+  });
+};
 
 // Add a department
 function addDept() {
@@ -137,74 +179,88 @@ function addDept() {
     );
   });
 }
-// Get all roles as CHOICE
-function viewEmpRoles() {
-  return db.promise().query("SELECT title, id FROM role");
-}
 
-// Get all employees as CHOICE
-
-function viewEmpChoices() {
-  return db.promise().query("SELECT first_name, last_name, id FROM employee");
-}
 // Update employee role
 const updateEmpR = () => {
-  viewEmpChoices()
-  .then(([rows]) => {
+  viewEmpChoices().then(([rows]) => {
     let employees = rows;
     console.log(employees);
     let employeeChoices = employees.map(
       (a) => `${a.first_name} ${a.last_name} ${a.id}`
     );
     console.log(employeeChoices);
-    
-    inquirer
-      .prompt([
-        {
-          type: "list",
-          name: "empL",
-          message: "Which Employee?",
-          choices: employeeChoices,
-        },
-      ])
-
-      .then(
-        viewEmpRoles().then(([rows]) => {
-          let roles = rows;
-          console.log(roles);
-          let roleChoices = roles.map((a) => `${a.title} ${a.id}`);
-          console.log(roleChoices);
-          inquirer
-            .prompt([
-              {
-                type: "list",
-                name: "roleL",
-                message: "Change to which role?",
-                choices: roleChoices,
-              },
-            ])
-            .then((data) => {
-              console.log(data);
-            });
-        })
-      );
+    viewEmpRoles().then(([rows]) => {
+      let roles = rows;
+      console.log(roles);
+      let roleChoices = roles.map((a) => `${a.title} ${a.id}`);
+      console.log(roleChoices);
+      inquirer
+        .prompt([
+          {
+            type: "list",
+            name: "empL",
+            message: "Which Employee?",
+            choices: employeeChoices,
+          },
+          {
+            type: "list",
+            name: "roleL",
+            message: "Change to which role?",
+            choices: roleChoices,
+          },
+        ])
+        .then((data) => {
+          console.log(data);
+        });
+    });
   });
 };
 
 // Add an Employee
-// const addEmpQ = [
-//   {
-//     type: "input",
-//     name: "newEmpName",
-//     message: "What is name of the new Employee?",
-//   },
-//   {
-//     type: "list",
-//     name: "newEmpDep",
-//     message: "What department are they in?",
-//     choices:
-//   },
-// ];
+const addNewEmp = () => {
+  viewMgrChoices().then(([rows]) => {
+    let mngrs = rows;
+    console.log(mngrs);
+    let managerChoices = mngrs.map(
+      (a) => `${a.first_name} ${a.last_name} ${a.id}`
+    );
+    console.log(managerChoices);
+    viewEmpRoles().then(([rows]) => {
+      let roles = rows;
+      console.log(roles);
+      let roleChoices = roles.map((a) => `${a.title} ${a.id}`);
+      console.log(roleChoices);
+      inquirer
+        .prompt([
+          {
+            type: "input",
+            name: "newEmpFName",
+            message: "What is the first name of the new Employee?",
+          },
+          {
+            type: "input",
+            name: "newEmpLName",
+            message: "What is the last name of the new Employee?",
+          },
+          {
+            type: "list",
+            name: "newEmpDep",
+            message: "What role do they have?",
+            choices: roleChoices,
+          },
+          {
+            type: "list",
+            name: "newEmpDep",
+            message: "Who is there manager?",
+            choices: managerChoices,
+          },
+        ])
+        .then((data) => {
+          console.log(data);
+        });
+    });
+  });
+};
 
 mainMenu();
 
