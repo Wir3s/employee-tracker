@@ -89,14 +89,16 @@ function viewMgrChoices() {
   return db
     .promise()
     .query(
-      "SELECT id, first_name, last_name FROM employee WHERE manager_id = NULL"
+      "SELECT id, first_name, last_name FROM employee WHERE manager_id IS NULL"
     );
 }
 
 // View all employees with PROMISE
 function viewAllEmp() {
   db.promise()
-    .query("SELECT first_name, last_name FROM employee")
+    .query(
+      "SELECT e.id, first_name, last_name, title, salary, d.name AS department FROM employee e JOIN role r ON e.role_id = r.id JOIN department d ON r.department_id = d.id"
+    )
     .then(([rows, fields]) => {
       console.table(rows);
       mainMenu();
@@ -222,7 +224,7 @@ const addNewEmp = () => {
     let mngrs = rows;
     console.log(mngrs);
     let managerChoices = mngrs.map(
-      (a) => `${a.first_name} ${a.last_name} ${a.id}`
+      (a) => `${a.id} ${a.first_name} ${a.last_name}`
     );
     console.log(managerChoices);
     viewEmpRoles().then(([rows]) => {
@@ -244,15 +246,15 @@ const addNewEmp = () => {
           },
           {
             type: "list",
-            name: "newEmpDep",
-            message: "What role do they have?",
-            choices: roleChoices,
+            name: "newEmpMgr",
+            message: "Who is their manager?",
+            choices: managerChoices,
           },
           {
             type: "list",
-            name: "newEmpDep",
-            message: "Who is there manager?",
-            choices: managerChoices,
+            name: "newEmpRole",
+            message: "What role do they have?",
+            choices: roleChoices,
           },
         ])
         .then((data) => {
@@ -264,7 +266,6 @@ const addNewEmp = () => {
 
 mainMenu();
 
-// Notes from Sara:
 // addEmployee(employee) {
 
 //   return this.connection.promise().query("INSERT INTO employee SET ?", employee);
