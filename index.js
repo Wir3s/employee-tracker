@@ -192,14 +192,15 @@ const updateEmpR = () => {
   viewEmpChoices().then(([rows]) => {
     let employees = rows;
     console.log(employees);
-    let employeeChoices = employees.map(
-      (a) => `${a.first_name} ${a.last_name} ${a.id}`
-    );
+    let employeeChoices = employees.map((a) => ({
+      name: a.first_name,
+      value: a.id,
+    }));
     console.log(employeeChoices);
     viewEmpRoles().then(([rows]) => {
       let roles = rows;
       console.log(roles);
-      let roleChoices = roles.map((a) => `${a.title} ${a.id}`);
+      let roleChoices = roles.map((a) => ({ name: a.title, value: a.id }));
       console.log(roleChoices);
       inquirer
         .prompt([
@@ -219,8 +220,17 @@ const updateEmpR = () => {
         .then((data) => {
           console.log(data);
           console.log(roles);
-          // const empLID = empL.split(" ");
-          // console.log(empLID[1]);
+          db.query(
+            "UPDATE employee SET ? WHERE id = data.empL",
+            {
+              //   id: data.empL,
+              role_id: data.roleL,
+            },
+            function (err, results) {
+              console.log(results);
+              viewAllEmp();
+            }
+          );
         });
     });
   });
@@ -231,14 +241,15 @@ const addNewEmp = () => {
   viewMgrChoices().then(([rows]) => {
     let mngrs = rows;
     console.log(mngrs);
-    let managerChoices = mngrs.map(
-      (a) => `${a.id} ${a.first_name} ${a.last_name}`
-    );
+    let managerChoices = mngrs.map((a) => ({
+      name: a.first_name,
+      value: a.id,
+    }));
     console.log(managerChoices);
     viewEmpRoles().then(([rows]) => {
       let roles = rows;
       console.log(roles);
-      let roleChoices = roles.map((a) => `${a.title} ${a.id}`);
+      let roleChoices = roles.map((a) => ({ name: a.title, value: a.id }));
       console.log(roleChoices);
       inquirer
         .prompt([
@@ -267,6 +278,19 @@ const addNewEmp = () => {
         ])
         .then((data) => {
           console.log(data);
+          db.query(
+            "INSERT INTO employee SET ?",
+            {
+              first_name: data.newEmpFName,
+              last_name: data.newEmpLName,
+              manager_id: data.newEmpMgr,
+              role_id: data.newEmpRole,
+            },
+            function (err, results) {
+              console.log(results);
+              viewAllEmp();
+            }
+          );
         });
     });
   });
