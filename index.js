@@ -109,7 +109,7 @@ function viewAllEmp() {
 // View Departments with PROMISE
 function viewAllDept() {
   db.promise()
-    .query("SELECT * FROM department")
+    .query("SELECT id, name AS department FROM department")
     .then(([rows, fields]) => {
       console.table(rows);
       mainMenu();
@@ -213,6 +213,9 @@ const updateEmpR = () => {
         ])
         .then((data) => {
           console.log(data);
+          console.log(roles);
+          // const empLID = empL.split(" ");
+          // console.log(empLID[1]);
         });
     });
   });
