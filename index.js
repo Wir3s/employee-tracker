@@ -64,7 +64,8 @@ function mainMenu() {
       case "Add Department":
         addDept();
         break;
-      case "Quit":
+      default:
+        quit();
         break;
     }
   });
@@ -133,7 +134,7 @@ const addRole = () => {
   viewDeptChoices().then(([rows]) => {
     let depts = rows;
     console.log(depts);
-    let deptChoices = depts.map((a) => (a.name, a.id));
+    let deptChoices = depts.map((a) => ({ name: a.name, value: a.id }));
     console.log(deptChoices);
     inquirer
       .prompt([
@@ -157,8 +158,12 @@ const addRole = () => {
       .then((data) => {
         console.log("Here is data", data);
         db.query(
-          "INSERT INTO role VALUES (?)",
-          [data.newRoleTitle, data.newSal, data.deptL],
+          "INSERT INTO role SET ?",
+          {
+            title: data.newRoleTitle,
+            salary: data.newSal,
+            department_id: data.deptL,
+          },
           function (err, results) {
             console.log(results);
             viewAllRoles();
@@ -266,6 +271,10 @@ const addNewEmp = () => {
     });
   });
 };
+
+function quit() {
+  process.exit();
+}
 
 mainMenu();
 
