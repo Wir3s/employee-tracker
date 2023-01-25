@@ -26,6 +26,7 @@ const mainMenuQ = [
       "Add Role",
       "View All Departments",
       "Add Department",
+      "View Employees By Department",
       "Quit",
     ],
     message: "What would you like to do?",
@@ -64,6 +65,9 @@ function mainMenu() {
       case "Add Department":
         addDept();
         break;
+      case "View Employees By Department":
+        viewEmpByDep();
+        break;
       default:
         quit();
         break;
@@ -98,7 +102,7 @@ function viewMgrChoices() {
 function viewAllEmp() {
   db.promise()
     .query(
-      "SELECT e.id, first_name, last_name, title, salary, d.name AS department FROM employee e JOIN role r ON e.role_id = r.id JOIN department d ON r.department_id = d.id"
+      "SELECT e.id, e.first_name AS First_Name, e.last_name AS Last_Name, m.first_name AS Manager, r.title AS Role, r.salary AS Salary, d.name AS Department FROM employee e JOIN role r ON e.role_id = r.id JOIN department d ON r.department_id = d.id LEFT JOIN employee m ON e.manager_id = m.id"
     )
     .then(([rows, fields]) => {
       console.table(rows);
@@ -168,6 +172,33 @@ const addRole = () => {
       });
   });
 };
+
+// View Employees By Department
+function viewEmpByDep() {
+  viewDeptChoices().then(([rows]) => {
+    let depts = rows;
+    let deptChoices = depts.map((a) => ({ name: a.name, value: a.id }));
+    inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "deptL",
+          message: "Which department does the role belong to?",
+          choices: deptChoices,
+        },
+      ])
+      .then((data) => {
+        db.query(
+          "SELECT e.id, e.first_name AS First_Name, e.last_name AS Last_Name, d.name AS Department FROM employee e JOIN role r ON e.role_id = r.id JOIN department d ON r.department_id = d.id WHERE ?",
+          { department_id: data.deptL },
+          function (err, results) {
+            console.table(results);
+            mainMenu();
+          }
+        );
+      });
+  });
+}
 
 // Add a department
 function addDept() {
