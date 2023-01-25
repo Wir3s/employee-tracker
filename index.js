@@ -133,9 +133,7 @@ function viewAllRoles() {
 const addRole = () => {
   viewDeptChoices().then(([rows]) => {
     let depts = rows;
-    console.log(depts);
     let deptChoices = depts.map((a) => ({ name: a.name, value: a.id }));
-    console.log(deptChoices);
     inquirer
       .prompt([
         {
@@ -156,7 +154,6 @@ const addRole = () => {
         },
       ])
       .then((data) => {
-        console.log("Here is data", data);
         db.query(
           "INSERT INTO role SET ?",
           {
@@ -165,7 +162,6 @@ const addRole = () => {
             department_id: data.deptL,
           },
           function (err, results) {
-            console.log(results);
             viewAllRoles();
           }
         );
@@ -180,7 +176,6 @@ function addDept() {
       "INSERT INTO department (name) VALUES (?)",
       [data.newD],
       function (err, results) {
-        console.log(results);
         viewAllDept();
       }
     );
@@ -191,17 +186,13 @@ function addDept() {
 const updateEmpR = () => {
   viewEmpChoices().then(([rows]) => {
     let employees = rows;
-    console.log(employees);
     let employeeChoices = employees.map((a) => ({
-      name: a.first_name,
+      name: a.first_name + " " + a.last_name,
       value: a.id,
     }));
-    console.log(employeeChoices);
     viewEmpRoles().then(([rows]) => {
       let roles = rows;
-      console.log(roles);
       let roleChoices = roles.map((a) => ({ name: a.title, value: a.id }));
-      console.log(roleChoices);
       inquirer
         .prompt([
           {
@@ -218,8 +209,6 @@ const updateEmpR = () => {
           },
         ])
         .then((data) => {
-          console.log(data);
-          console.log(roles);
           db.query(
             "UPDATE employee SET ? WHERE ?",
             [
@@ -241,17 +230,13 @@ const updateEmpR = () => {
 const addNewEmp = () => {
   viewMgrChoices().then(([rows]) => {
     let mngrs = rows;
-    console.log(mngrs);
     let managerChoices = mngrs.map((a) => ({
-      name: a.first_name,
+      name: a.first_name + " " + a.last_name,
       value: a.id,
     }));
-    console.log(managerChoices);
     viewEmpRoles().then(([rows]) => {
       let roles = rows;
-      console.log(roles);
       let roleChoices = roles.map((a) => ({ name: a.title, value: a.id }));
-      console.log(roleChoices);
       inquirer
         .prompt([
           {
@@ -278,7 +263,6 @@ const addNewEmp = () => {
           },
         ])
         .then((data) => {
-          console.log(data);
           db.query(
             "INSERT INTO employee SET ?",
             {
@@ -288,7 +272,6 @@ const addNewEmp = () => {
               role_id: data.newEmpRole,
             },
             function (err, results) {
-              console.log(results);
               viewAllEmp();
             }
           );
@@ -302,7 +285,3 @@ function quit() {
 }
 
 mainMenu();
-
-// addEmployee(employee) {
-
-//   return this.connection.promise().query("INSERT INTO employee SET ?", employee);
