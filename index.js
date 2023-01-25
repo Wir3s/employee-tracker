@@ -221,13 +221,14 @@ const updateEmpR = () => {
           console.log(data);
           console.log(roles);
           db.query(
-            "UPDATE employee SET ? WHERE id = data.empL",
-            {
-              //   id: data.empL,
-              role_id: data.roleL,
-            },
+            "UPDATE employee SET ? WHERE ?",
+            [
+              {
+                role_id: data.roleL,
+              },
+              { id: data.empL },
+            ],
             function (err, results) {
-              console.log(results);
               viewAllEmp();
             }
           );
