@@ -17,10 +17,9 @@
 
 ## Usage
   It can be used by running 'node index.js' from the terminal.
+
   
-  ![Screenshot1](./images/team-gen-sc1.png)
-  
-  [Link to video of application in action](https://drive.google.com/file/d/1heZTP5AvhwrJyCwY1SB-KLmm9m4WBCS2/view)
+  [Link to video of application in action](https://drive.google.com/file/d/1YydpWUmZ50oY372K77EpYDLVFC-qHE-l/view)
 
 ## Contributing
   Any contribution suggestions are welcome.
